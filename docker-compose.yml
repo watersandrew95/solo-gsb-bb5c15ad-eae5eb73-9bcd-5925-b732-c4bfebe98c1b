@@ -1,0 +1,16 @@
+services:
+  pwnet:
+    build: .
+    image: pwnet-planner:latest
+    container_name: pwnet-planner
+    ports:
+      - "${PORT:-8000}:8000"   # 宿主机端口:容器端口
+    environment:
+      PORT: "8000"             # 容器内监听端口
+      DATA_DIR: /app/data      # SQLite 数据目录
+    volumes:
+      - pwnet-data:/app/data   # 数据持久化
+    restart: unless-stopped
+
+volumes:
+  pwnet-data:

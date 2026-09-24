@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>管网漏点隔离规划台</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header>
+    <h1>🚰 管网漏点隔离规划台</h1>
+    <p class="subtitle">录入管网与阀门，求解“隔离漏点且必保点不断水”的最低代价关阀方案</p>
+  </header>
+
+  <main>
+    <!-- 左侧：方案录入 -->
+    <section class="panel" id="input-panel">
+      <h2>① 方案录入</h2>
+
+      <label for="edges">管段（无向，每行一条：<code>端点A 端点B</code>）</label>
+      <textarea id="edges" rows="7" spellcheck="false" placeholder="S1 A&#10;A B&#10;B L1"></textarea>
+
+      <div class="row">
+        <div>
+          <label for="sources">进水点</label>
+          <input id="sources" type="text" placeholder="S1 S2">
+        </div>
+        <div>
+          <label for="leaks">漏点</label>
+          <input id="leaks" type="text" placeholder="L1">
+        </div>
+        <div>
+          <label for="musts">必保供水点</label>
+          <input id="musts" type="text" placeholder="H1 H2 H3">
+        </div>
+      </div>
+
+      <label for="valves">阀门（每行一个：<code>编号 端点A 端点B 关闭代价</code>，最多 14 个，代价为正整数）</label>
+      <textarea id="valves" rows="7" spellcheck="false" placeholder="1 S1 A 4&#10;3 B L1 2"></textarea>
+
+      <div class="btn-row">
+        <button id="btn-save" class="btn">💾 保存方案</button>
+        <button id="btn-solve" class="btn primary">⚙️ 求解最优关阀</button>
+        <button id="btn-demo" class="btn">📋 载入示例</button>
+        <button id="btn-clear" class="btn ghost">🗑 清空</button>
+      </div>
+      <div id="message" class="message" hidden></div>
+    </section>
+
+    <!-- 右侧：求解结果 -->
+    <section class="panel" id="result-panel">
+      <h2>② 求解结果</h2>
+      <div id="result-empty" class="empty">尚未求解。录入方案后点击「求解最优关阀」。</div>
+
+      <div id="result-body" hidden>
+        <div id="result-banner"></div>
+
+        <h3>关阀清单</h3>
+        <div id="close-list" class="chips"></div>
+        <div id="closed-segments" class="muted"></div>
+
+        <h3>管网状态图</h3>
+        <svg id="graph" viewBox="0 0 640 440" role="img" aria-label="管网状态图"></svg>
+        <div class="legend">
+          <span><i class="dot source"></i>进水点</span>
+          <span><i class="dot leak"></i>漏点</span>
+          <span><i class="dot supplied"></i>供水正常</span>
+          <span><i class="dot outage"></i>停水</span>
+          <span><i class="ring"></i>必保点</span>
+          <span><i class="dash"></i>被切断管段</span>
+        </div>
+
+        <h3>各节点隔离后的供水状态</h3>
+        <table id="node-table">
+          <thead>
+            <tr><th>节点</th><th>角色</th><th>隔离后状态</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span>API 文档：<a href="/docs" target="_blank">/docs</a></span>
+    <span>接口：<code>GET /api/scenario</code> · <code>PUT /api/scenario</code> · <code>POST /api/solve</code> · <code>GET /api/result</code></span>
+  </footer>
+
+  <script src="/app.js" defer></script>
+</body>
+</html>
